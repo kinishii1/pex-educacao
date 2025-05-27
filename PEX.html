@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PEX: Educação de Qualidade & Eng. de Software</title>
+    <style>
+        /* === GERAL === */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f2f6; /* Cinza claro, suave */
+            color: #333;
+            display: flex; /* Para layout de sidebar + conteúdo */
+        }
+
+        /* === SIDEBAR SIMULADA === */
+        .sidebar {
+            width: 280px;
+            background-color: #ffffff; /* Branco para contraste */
+            padding: 20px;
+            height: 100vh; /* Altura total da viewport */
+            position: fixed; /* Fixa na tela */
+            left: 0;
+            top: 0;
+            overflow-y: auto; /* Scroll se conteúdo for maior */
+            border-right: 1px solid #ddd;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+        }
+        .sidebar img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        .sidebar h1 {
+            font-size: 1.5em;
+            color: #005A9C; /* Azul escuro profissional */
+            margin-top: 0;
+        }
+        .sidebar h2 {
+            font-size: 1.2em;
+            color: #007bff; /* Azul vibrante */
+        }
+        .sidebar p, .sidebar li {
+            font-size: 0.9em;
+            color: #555;
+        }
+        .sidebar hr {
+            border: 0;
+            height: 1px;
+            background: #ddd;
+            margin: 20px 0;
+        }
+        .sidebar .info-box {
+            background-color: #e7f3fe;
+            border-left: 4px solid #2196F3;
+            padding: 10px;
+            font-size: 0.85em;
+            border-radius: 4px;
+        }
+
+        /* === CONTEÚDO PRINCIPAL === */
+        .main-content {
+            margin-left: 300px; /* Espaço para a sidebar + um pouco de margem */
+            padding: 30px;
+            width: calc(100% - 300px); /* Ocupa o restante da largura */
+            max-width: 900px; /* Limita a largura para melhor leitura */
+            margin-right: auto; /* Centraliza se a tela for muito larga */
+        }
+
+        h1, h2, h3, h4 {
+            color: #005A9C; /* Azul escuro profissional */
+        }
+        .main-content h1 {
+            font-size: 2.2em;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .main-content h2 {
+            font-size: 1.8em;
+            margin-top: 40px;
+        }
+        .main-content h3 {
+            font-size: 1.4em;
+            color: #007bff; /* Azul mais vibrante para subseções */
+        }
+
+        p {
+            margin-bottom: 1em;
+        }
+        ul {
+            margin-bottom: 1em;
+            padding-left: 20px;
+        }
+        li {
+            margin-bottom: 0.5em;
+        }
+        strong {
+            color: #004085; /* Um tom de azul mais escuro para destaque */
+        }
+
+        /* === ABAS SIMULADAS (Navegação por links internos) === */
+        .tab-navigation {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #ddd;
+        }
+        .tab-navigation a {
+            padding: 10px 15px;
+            background-color: #e6e6e6;
+            color: #333;
+            text-decoration: none;
+            border-radius: 4px 4px 0 0;
+            font-weight: 500;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .tab-navigation a:hover, .tab-navigation a.active { /* 'active' pode ser adicionado com JS, ou manualmente para a primeira */
+            background-color: #007bff;
+            color: white;
+        }
+        .tab-section {
+            padding-top: 20px; /* Espaço para o título da seção */
+            border-top: 1px dashed #eee; /* Separador visual sutil */
+            margin-top: -1px; /* Para sobrepor a borda inferior da navegação */
+        }
+        .tab-section:first-of-type {
+            border-top: none; /* Remove a primeira borda superior */
+        }
+
+
+        /* === COLUNAS === */
+        .columns-container {
+            display: flex;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .column {
+            flex: 1;
+            background-color: #ffffff;
+            padding: 15px;
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        /* === EXPANDERS (usando <details> e <summary>) === */
+        details {
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 1em;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        summary {
+            padding: 15px;
+            font-weight: bold;
+            color: #005A9C;
+            cursor: pointer;
+            outline: none; /* Remove o anel de foco padrão do Chrome */
+            display: list-item; /* Garante a seta */
+        }
+        details[open] summary {
+            border-bottom: 1px solid #ddd;
+        }
+        .expander-content {
+            padding: 15px;
+            border-top: 1px solid #eee;
+        }
+
+        /* === CAIXAS DE INFO E SUCCESS === */
+        .info-message {
+            background-color: #e7f3fe;
+            border-left: 5px solid #2196F3;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        .success-message {
+            background-color: #e8f5e9;
+            border-left: 5px solid #4CAF50;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+
+        /* === IMAGENS NO CONTEÚDO === */
+        .main-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin: 15px 0;
+        }
+        figcaption {
+            text-align: center;
+            font-style: italic;
+            font-size: 0.9em;
+            color: #777;
+            margin-top: -10px;
+            margin-bottom: 15px;
+        }
+
+        /* === RODAPÉ === */
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            font-size: 0.9em;
+            color: #777;
+        }
+
+        /* === RESPONSIVIDADE === */
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: static; /* Remove a fixação */
+                border-right: none;
+                border-bottom: 1px solid #ddd;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            }
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+                padding: 20px;
+            }
+            .columns-container {
+                flex-direction: column;
+            }
+            .tab-navigation a {
+                flex-grow: 1;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <img src="https://www.unicef.org/sites/default/files/styles/press_release_feature/public/SDG-4.png?itok=8fYq7j_s" alt="ODS 4 - Educação de Qualidade">
+        <h1>🎓 PEX Eng. Software</h1>
+        <h2>Educação de Qualidade (ODS 4)</h2>
+        <hr>
+        <p><strong>Aluno:</strong> Kin Miyaji Ishii</p>
+        <p><strong>Curso:</strong> Engenharia de Software</p>
+        <p><strong>Instituição:</strong> Faculdade Descomplica</p>
+        <hr>
+        <div class="info-box">
+            <p>Este mini-curso explora a Educação de Qualidade</p>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <h1>Mini-Curso: Educação de Qualidade e o Papel da Engenharia de Software 🚀</h1>
+        <p>Uma jornada pelos desafios e oportunidades na construção de um futuro educacional mais justo e eficaz.</p>
+
+        <div class="tab-navigation">
+            <a href="#tab1" class="active">🎯 O que é?</a>
+            <a href="#tab2">🛠️ Pilares</a>
+            <a href="#tab3">💻 Tecnologia</a>
+            <a href="#tab4">💡 Eng. Software</a>
+            <a href="#tab5">🏁 Conclusão</a>
+        </div>
+
+        <section id="tab1" class="tab-section">
+            <h2>🎯 O que é Educação de Qualidade?</h2>
+            <p>
+                A Educação de Qualidade, conforme delineado pelo <strong>Objetivo de Desenvolvimento Sustentável 4 (ODS 4)</strong> da ONU,
+                vai além do simples acesso à escola. Trata-se de garantir que todos os estudantes adquiram conhecimentos e
+                habilidades relevantes para uma vida produtiva, participativa e com bem-estar.
+            </p>
+            <p><strong>Não é apenas sobre:</strong></p>
+            <ul>
+                <li>Estar matriculado.</li>
+                <li>Ter um diploma.</li>
+            </ul>
+            <p><strong>É fundamentalmente sobre:</strong></p>
+            <ul>
+                <li><strong>Aprendizagem Efetiva:</strong> Desenvolver competências cognitivas, socioemocionais e técnicas.</li>
+                <li><strong>Relevância:</strong> O currículo deve ser adaptado às necessidades atuais e futuras dos alunos e da sociedade.</li>
+                <li><strong>Equidade e Inclusão:</strong> Oportunidades iguais para todos, independentemente de origem, gênero, condição socioeconômica ou necessidades especiais.</li>
+                <li><strong>Ambiente Seguro e Acolhedor:</strong> Espaços de aprendizagem que promovam o respeito e a participação.</li>
+            </ul>
+            <p>Uma educação de qualidade capacita indivíduos, fortalece comunidades e impulsiona o desenvolvimento sustentável.</p>
+            <!-- <img src="URL_DE_UMA_IMAGEM_ILUSTRATIVA_ODS4_OU_ALUNOS_ESTUDANDO.jpg" alt="Educação de Qualidade transforma vidas."> -->
+            <!-- <figcaption>Educação de Qualidade transforma vidas.</figcaption> -->
+        </section>
+
+        <section id="tab2" class="tab-section">
+            <h2>🛠️ Pilares Fundamentais da Educação de Qualidade</h2>
+            <p>Para que a educação seja considerada de qualidade, diversos componentes interconectados são essenciais:</p>
+
+            <div class="columns-container">
+                <div class="column">
+                    <h3>👨‍🏫 Professores Qualificados e Valorizados</h3>
+                    <ul>
+                        <li>Formação inicial e continuada robusta.</li>
+                        <li>Condições de trabalho adequadas e remuneração justa.</li>
+                        <li>Autonomia pedagógica e suporte institucional.</li>
+                    </ul>
+                </div>
+                <div class="column">
+                    <h3>🏗️ Infraestrutura Adequada</h3>
+                    <ul>
+                        <li>Espaços físicos seguros, acessíveis e propícios à aprendizagem.</li>
+                        <li>Recursos didáticos e tecnológicos disponíveis e funcionais.</li>
+                        <li>Acesso à internet de qualidade para alunos e educadores.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="columns-container">
+                <div class="column">
+                    <h3>📚 Currículo Relevante e Contemporâneo</h3>
+                    <ul>
+                        <li>Alinhado com as demandas do século XXI (pensamento crítico, colaboração, criatividade).</li>
+                        <li>Flexível para se adaptar a diferentes contextos e necessidades.</li>
+                        <li>Inclusivo, refletindo a diversidade cultural e social.</li>
+                    </ul>
+                </div>
+                <div class="column">
+                    <h3>⚖️ Equidade e Inclusão Ativas</h3>
+                    <ul>
+                        <li>Políticas para reduzir desigualdades educacionais.</li>
+                        <li>Atendimento a estudantes com necessidades educacionais especiais.</li>
+                        <li>Promoção de um ambiente livre de discriminação.</li>
+                    </ul>
+                </div>
+            </div>
+            <hr style="margin: 30px 0; border-top: 1px solid #ccc;">
+            <div class="info-message">
+                <p>💡 <strong>Reflexão:</strong> Como futuros engenheiros de software, podemos pensar em soluções que otimizem a gestão desses pilares?</p>
+            </div>
+        </section>
+
+        <section id="tab3" class="tab-section">
+            <h2>💻 O Impacto Transformador da Tecnologia na Educação</h2>
+            <p>
+                A tecnologia, quando bem aplicada, é uma aliada poderosa na busca pela educação de qualidade.
+                Ela pode ampliar o acesso, personalizar o aprendizado e otimizar processos.
+            </p>
+            <p><strong>Algumas áreas de impacto:</strong></p>
+
+            <h3>Plataformas de Aprendizagem (LMS - Learning Management Systems)</h3>
+            <ul>
+                <li>Organização de conteúdo, atividades e avaliações.</li>
+                <li>Facilitação da comunicação entre alunos e professores.</li>
+                <li>Exemplos: Moodle, Google Classroom, Blackboard.</li>
+                <li><strong>Desafio para Eng. de Software:</strong> Criar interfaces intuitivas, escaláveis e seguras.</li>
+            </ul>
+
+            <h3>Recursos Educacionais Digitais (RED)</h3>
+            <ul>
+                <li>Vídeos, simulações, jogos educativos, e-books.</li>
+                <li>Tornam o aprendizado mais dinâmico e engajador.</li>
+                <li><strong>Desafio para Eng. de Software:</strong> Desenvolver REDs acessíveis, interativos e com design instrucional eficaz.</li>
+            </ul>
+
+            <h3>Ferramentas de Colaboração Online</h3>
+            <ul>
+                <li>Permitem trabalhos em grupo e projetos à distância.</li>
+                <li>Desenvolvem habilidades de comunicação e trabalho em equipe.</li>
+                <li>Exemplos: Google Workspace, Microsoft Teams.</li>
+                <li><strong>Desafio para Eng. de Software:</strong> Garantir a sincronicidade, usabilidade e a gestão de permissões.</li>
+            </ul>
+
+            <h3>Inteligência Artificial (IA) e Aprendizagem Adaptativa</h3>
+            <ul>
+                <li>Personalização do ritmo e do conteúdo de acordo com o progresso individual do aluno.</li>
+                <li>Feedback imediato e direcionado.</li>
+                <li><strong>Desafio para Eng. de Software:</strong> Desenvolver algoritmos éticos, transparentes e que realmente melhorem a aprendizagem, evitando vieses.</li>
+            </ul>
+            <!-- <img src="URL_DE_IMAGEM_TECNOLOGIA_EDUCACAO.jpg" alt="A tecnologia como ferramenta pedagógica."> -->
+            <!-- <figcaption>A tecnologia como ferramenta pedagógica.</figcaption> -->
+        </section>
+
+        <section id="tab4" class="tab-section">
+            <h2>💡 A Engenharia de Software em Ação pela Educação</h2>
+            <p>
+                Como estudantes e futuros profissionais de Engenharia de Software, temos um papel crucial na concepção, desenvolvimento e
+                manutenção de soluções tecnológicas que podem revolucionar a educação.
+            </p>
+
+            <details>
+                <summary>📐 Design Centrado no Usuário (UX/UI) para Ferramentas Educacionais</summary>
+                <div class="expander-content">
+                    <p><strong>O Problema:</strong> Muitas plataformas educacionais são complexas ou pouco intuitivas, dificultando o uso por alunos e professores.</p>
+                    <p><strong>A Solução da Eng. de Software:</strong> Aplicar princípios de UX/UI para criar interfaces amigáveis, acessíveis (WCAG) e que promovam uma experiência de aprendizado positiva.</p>
+                    <ul>
+                        <li>Testes de usabilidade com o público-alvo.</li>
+                        <li>Design responsivo para diferentes dispositivos.</li>
+                    </ul>
+                </div>
+            </details>
+
+            <details>
+                <summary>🔧 Desenvolvimento de Sistemas Escaláveis e Seguros</summary>
+                <div class="expander-content">
+                    <p><strong>O Problema:</strong> Plataformas que não suportam um grande número de usuários simultâneos ou que possuem vulnerabilidades de segurança.</p>
+                    <p><strong>A Solução da Eng. de Software:</strong></p>
+                    <ul>
+                        <li>Arquiteturas robustas (microsserviços, cloud computing) para garantir escalabilidade e disponibilidade.</li>
+                        <li>Implementação de boas práticas de segurança de dados (criptografia, autenticação multifator, conformidade com LGPD/GDPR).</li>
+                    </ul>
+                </div>
+            </details>
+
+            <details>
+                <summary>📊 Análise de Dados para Melhoria Contínua (Learning Analytics)</summary>
+                <div class="expander-content">
+                    <p><strong>O Problema:</strong> Dificuldade em identificar padrões de aprendizagem, alunos com dificuldades ou a eficácia de métodos pedagógicos.</p>
+                    <p><strong>A Solução da Eng. de Software:</strong></p>
+                    <ul>
+                        <li>Desenvolver dashboards e ferramentas de visualização de dados que permitam aos educadores e gestores tomar decisões informadas.</li>
+                        <li>Utilizar algoritmos para identificar alunos em risco e sugerir intervenções personalizadas (com ética e transparência).</li>
+                    </ul>
+                </div>
+            </details>
+
+            <details>
+                <summary>🧩 Gamificação e Elementos Interativos</summary>
+                <div class="expander-content">
+                    <p><strong>O Problema:</strong> Falta de engajamento e motivação dos alunos em ambientes de aprendizagem tradicionais.</p>
+                    <p><strong>A Solução da Eng. de Software:</strong></p>
+                    <ul>
+                        <li>Incorporar mecânicas de jogos (pontos, badges, rankings, narrativas) em plataformas educacionais para tornar o aprendizado mais divertido e estimulante.</li>
+                        <li>Desenvolver simulações e laboratórios virtuais interativos.</li>
+                    </ul>
+                </div>
+            </details>
+
+            <details>
+                <summary>🌐 Promoção da Acessibilidade Digital</summary>
+                <div class="expander-content">
+                    <p><strong>O Problema:</strong> Muitas ferramentas digitais não são acessíveis para pessoas com deficiência (visual, auditiva, motora, cognitiva).</p>
+                    <p><strong>A Solução da Eng. de Software:</strong></p>
+                    <ul>
+                        <li>Desenvolver seguindo as diretrizes de acessibilidade (WCAG).</li>
+                        <li>Testar com tecnologias assistivas (leitores de tela, etc.).</li>
+                        <li>Garantir que todos possam se beneficiar das soluções educacionais propostas.</li>
+                    </ul>
+                </div>
+            </details>
+            <div class="success-message">
+                <p>🚀 <strong>Nossa Missão:</strong> Como engenheiros de software, não apenas codificamos, mas resolvemos problemas. Aplicar nosso conhecimento para melhorar a educação é uma forma poderosa de gerar impacto social positivo.</p>
+            </div>
+        </section>
+
+        <section id="tab5" class="tab-section">
+            <h2>🏁 Conclusão e Próximos Passos</h2>
+            <p>
+                A jornada rumo à Educação de Qualidade universal é complexa e multifacetada, exigindo a colaboração de diversos atores sociais.
+                Nós, como futuros Engenheiros de Software, estamos em uma posição privilegiada para contribuir significativamente.
+            </p>
+            <p><strong>Principais Pontos a Recordar:</strong></p>
+            <ul>
+                <li>Educação de Qualidade é um direito fundamental e um motor para o desenvolvimento sustentável (ODS 4).</li>
+                <li>Os pilares (professores, currículo, infraestrutura, equidade) são interdependentes.</li>
+                <li>A tecnologia é uma ferramenta poderosa, mas seu sucesso depende de uma implementação pedagógica e tecnicamente sólida.</li>
+                <li>A Engenharia de Software oferece as metodologias, ferramentas e o <em>mindset</em> para construir soluções educacionais inovadoras, eficazes, seguras e inclusivas.</li>
+            </ul>
+            <p><strong>Como podemos, na prática, contribuir (mesmo como estudantes)?</strong></p>
+            <ol>
+                <li><strong>Projetos Acadêmicos:</strong> Escolher temas relacionados à EdTech para trabalhos de disciplina, TCCs ou projetos de iniciação científica.</li>
+                <li><strong>Hackathons e Desafios:</strong> Participar de eventos que busquem soluções tecnológicas para problemas educacionais.</li>
+                <li><strong>Comunidades e Código Aberto:</strong> Contribuir para projetos open-source na área de educação.</li>
+                <li><strong>Aprendizado Contínuo:</strong> Manter-se atualizado sobre as tendências em EdTech e as necessidades do setor educacional.</li>
+                <li><strong>Pensamento Crítico e Ético:</strong> Sempre questionar o impacto social das tecnologias que desenvolvemos, especialmente na educação, priorizando a equidade e a inclusão.</li>
+            </ol>
+            <p>
+                O futuro da educação também está em nossas mãos – nas linhas de código que escrevermos, nas arquiteturas que projetarmos e
+                nas soluções que idealizarmos. Que possamos usar nossas habilidades para construir um futuro onde a educação de qualidade
+                seja uma realidade para todos.
+            </p>
+            <!-- O st.balloons() é um efeito do Streamlit e não tem equivalente direto em HTML/CSS estático simples. -->
+            <!-- Poderia ser um GIF ou uma pequena animação CSS se quisesse algo visual. -->
+        </section>
+
+        <div class="footer">
+            <p>Mini-curso desenvolvido para a PEX da disciplina de [Nome da Disciplina].</p>
+        </div>
+    </div>
+
+<script>
+    // Script simples para dar a classe 'active' ao link da aba clicada
+    // e rolar suavemente para a seção.
+    document.addEventListener('DOMContentLoaded', function() {
+        const tabLinks = document.querySelectorAll('.tab-navigation a');
+        const sections = document.querySelectorAll('.tab-section');
+
+        // Função para navegação suave
+        function smoothScrollTo(elementId) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                // Calcula a posição do elemento considerando o cabeçalho fixo (se houvesse um mais complexo)
+                // Neste caso, um ajuste pequeno pode ser necessário dependendo do layout exato
+                const offsetTop = element.offsetTop - 20; // Ajuste de 20px para não colar no topo
+                window.scrollTo({
+                    top: offsetTop,
+                    behavior: 'smooth'
+                });
+            }
+        }
+
+        tabLinks.forEach(link => {
+            link.addEventListener('click', function(event) {
+                event.preventDefault(); // Previne o comportamento padrão do link de âncora
+
+                // Remove 'active' de todos os links
+                tabLinks.forEach(l => l.classList.remove('active'));
+                // Adiciona 'active' ao link clicado
+                this.classList.add('active');
+
+                const targetId = this.getAttribute('href').substring(1);
+                smoothScrollTo(targetId);
+            });
+        });
+
+        // Opcional: Ativar a aba correta se a página for carregada com um hash
+        if (window.location.hash) {
+            const currentHash = window.location.hash.substring(1);
+            const activeLink = document.querySelector(`.tab-navigation a[href="#${currentHash}"]`);
+            if (activeLink) {
+                tabLinks.forEach(l => l.classList.remove('active'));
+                activeLink.classList.add('active');
+                // Não precisa de scroll aqui, o navegador já faz isso com o hash,
+                // mas se quiser um scroll suave ao carregar com hash:
+                // setTimeout(() => smoothScrollTo(currentHash), 100);
+            }
+        }
+    });
+</script>
+
+</body>
+</html>
